@@ -8,13 +8,13 @@ import (
 
 type hrefFilter func(string) bool
 
-// Parse html body and extract all links enclosed in href quotes and match filter function fn
-func GetHrefs(body string, fn hrefFilter) []string {
+// Parse html body and extract all links enclosed in href quotes
+func GetHrefs(body string) []string {
 	r := regexp.MustCompile(`href="(.*?)"`)
 	matches := r.FindAllStringSubmatch(body, -1)
 	var hrefs []string
 	for _, val := range matches {
-		if len(val[1]) > 0 && fn(val[1]) { // check if href is not empty string and satisfies filter criteria
+		if len(val[1]) > 0 { // check if href is not empty string
 			hrefs = append(hrefs, val[1])
 		}
 	}

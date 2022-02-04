@@ -1,14 +1,12 @@
 package main
 
 import (
-	"strings"
 	"testing"
 )
 
 type getHrefsTest struct {
 	body  string
 	hrefs []string
-	fn    hrefFilter
 }
 
 var htmlString = `
@@ -45,30 +43,21 @@ var getHrefsTests = []getHrefsTest{
 	{
 		"href=\"\"",
 		[]string{},
-		func(s string) bool {
-			return true
-		},
 	},
 	{
 		"<a href=\"/en/test\"></a><a href=\"/test.js\"></a>",
-		[]string{"/en/test"},
-		func(s string) bool {
-			return strings.HasPrefix(s, "/en")
+		[]string{
+			"/en/test",
+			"/test.js",
 		},
 	},
 	{
 		"href=\"www.google.com\"",
 		[]string{"www.google.com"},
-		func(s string) bool {
-			return true
-		},
 	},
 	{
 		"<a href=\"https://example.com\">Visit example.com!</a>",
 		[]string{"https://example.com"},
-		func(s string) bool {
-			return true
-		},
 	},
 	{
 		htmlString,
@@ -83,15 +72,12 @@ var getHrefsTests = []getHrefsTest{
 			"html_images.asp",
 			"/css/default.asp",
 		},
-		func(s string) bool {
-			return true
-		},
 	},
 }
 
 func TestGetHrefs(t *testing.T) {
 	for _, test := range getHrefsTests {
-		hrefs := GetHrefs(test.body, test.fn)
+		hrefs := GetHrefs(test.body)
 		if len(hrefs) != len(test.hrefs) {
 			t.Fatalf("Expected slice of length %d but got %d", len(test.hrefs), len(hrefs))
 		}
