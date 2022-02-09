@@ -25,8 +25,6 @@ func main() {
 		log.Fatalln("--baseUrl is required")
 	}
 
-	entrypoint, _ := c.FindCommand("entrypoint")
-	prefix, _ := c.FindCommand("prefix")
 	userAgent, _ := c.FindCommand("userAgent")
 	ignorePartial, ok := c.FindCommand("ignorePartial")
 
@@ -36,7 +34,6 @@ func main() {
 		ignorePartialList = strings.Split(ignorePartial, ",")
 	}
 
-	prefix = baseUrl + prefix
 	uaMap := make(map[string]string)
 	uaMap["google"] = GoogleBot
 	uaMap["bing"] = BingBot
@@ -49,11 +46,11 @@ func main() {
 	}
 
 	us := NewUniqStack()
-	us.Push(entrypoint)
+	us.Push(baseUrl)
 
 	count := 0
 
-	log.Printf("Starting fetch for %s with UserAgent %s", baseUrl+entrypoint, userAgent)
+	log.Printf("Starting fetch for %s with UserAgent %s", baseUrl, userAgent)
 	for len(us.stack) > 0 {
 		count++
 
@@ -63,7 +60,8 @@ func main() {
 					return true
 				}
 			}
-			return !strings.HasPrefix(s, prefix)
+			// return !strings.HasPrefix(s, prefix)
+			return true
 		}
 
 		uri, err := us.Pop()
